@@ -12,12 +12,13 @@ import retrofit2.Retrofit;
 public class JavaTest {
 
     public void test() {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addNetworkInterceptor(DebugInterceptor.INSTANCE)
-                .build();
+        OkHttpClient.Builder client = new OkHttpClient.Builder();
+        if (BuildConfig.DEBUG) {
+            client.addNetworkInterceptor(DebugInterceptor.INSTANCE);
+        }
 
         Retrofit retrofit = new Retrofit.Builder()
-                .client(client)
+                .client(client.build())
                 .addCallAdapterFactory(RetryCallAdapterFactory.INSTANCE)
                 .build();
 

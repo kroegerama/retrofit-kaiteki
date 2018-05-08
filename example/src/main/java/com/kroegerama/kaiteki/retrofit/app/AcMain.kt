@@ -3,7 +3,6 @@ package com.kroegerama.kaiteki.retrofit.app
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.Toast
 import com.kroegerama.kaiteki.retrofit.DebugInterceptor
 import com.kroegerama.kaiteki.retrofit.RetryCallAdapterFactory
 import kotlinx.android.synthetic.main.ac_main.*
@@ -21,11 +20,13 @@ class AcMain : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ac_main)
         val client = OkHttpClient.Builder()
-                .addNetworkInterceptor(DebugInterceptor)
-                .build()
+
+        if (BuildConfig.DEBUG) {
+            client.addNetworkInterceptor(DebugInterceptor)
+        }
 
         val retrofit = Retrofit.Builder()
-                .client(client)
+                .client(client.build())
                 .addCallAdapterFactory(RetryCallAdapterFactory)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
