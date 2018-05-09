@@ -3,7 +3,9 @@ package com.kroegerama.kaiteki.retrofit.app
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.kroegerama.kaiteki.retrofit.CacheCallAdapterFactory
 import com.kroegerama.kaiteki.retrofit.DebugInterceptor
+import com.kroegerama.kaiteki.retrofit.DefaultCacheHandler
 import com.kroegerama.kaiteki.retrofit.RetryCallAdapterFactory
 import kotlinx.android.synthetic.main.ac_main.*
 import okhttp3.OkHttpClient
@@ -16,9 +18,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 class AcMain : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.ac_main)
+    private val api by lazy {
         val client = OkHttpClient.Builder()
 
         if (BuildConfig.DEBUG) {
@@ -28,17 +28,27 @@ class AcMain : AppCompatActivity() {
         val retrofit = Retrofit.Builder()
                 .client(client.build())
                 .addCallAdapterFactory(RetryCallAdapterFactory)
+                .addCallAdapterFactory(CacheCallAdapterFactory(DefaultCacheHandler(this)))
                 .addConverterFactory(GsonConverterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .baseUrl("https://jsonplaceholder.typicode.com")
                 .build()
 
-        val api = retrofit.create(KotlinAPI::class.java)
+        retrofit.create(KotlinAPI::class.java)
+    }
 
-        Log.d("API", "" + api)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.ac_main)
+
+        textView.setOnClickListener { loadData() }
+        loadData()
+    }
+
+    private fun loadData() {
         api.getPost(1).enqueue(object : Callback<Post> {
             override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                Log.d("onResponse",  response.body().toString())
+                Log.d("onResponse", response.body().toString())
                 textView.text = response.body().toString()
             }
 

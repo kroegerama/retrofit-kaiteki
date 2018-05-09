@@ -1,6 +1,11 @@
 package com.kroegerama.kaiteki.retrofit.app;
 
+import android.content.Context;
+
+import com.kroegerama.kaiteki.retrofit.CacheCallAdapterFactory;
+import com.kroegerama.kaiteki.retrofit.CacheHandler;
 import com.kroegerama.kaiteki.retrofit.DebugInterceptor;
+import com.kroegerama.kaiteki.retrofit.DefaultCacheHandler;
 import com.kroegerama.kaiteki.retrofit.RetryCallAdapterFactory;
 
 import okhttp3.OkHttpClient;
@@ -11,7 +16,7 @@ import retrofit2.Retrofit;
 
 public class JavaTest {
 
-    public void test() {
+    public void test(Context context) {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         if (BuildConfig.DEBUG) {
             client.addNetworkInterceptor(DebugInterceptor.INSTANCE);
@@ -20,6 +25,7 @@ public class JavaTest {
         Retrofit retrofit = new Retrofit.Builder()
                 .client(client.build())
                 .addCallAdapterFactory(RetryCallAdapterFactory.INSTANCE)
+                .addCallAdapterFactory(new CacheCallAdapterFactory(new DefaultCacheHandler(context, DefaultCacheHandler.DEFAULT_DISK_SIZE, DefaultCacheHandler.DEFAULT_MEM_CACHE_ENTRIES)))
                 .build();
 
         JavaAPI javaAPI = retrofit.create(JavaAPI.class);

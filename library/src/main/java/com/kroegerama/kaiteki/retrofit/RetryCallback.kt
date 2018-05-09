@@ -30,13 +30,14 @@ class RetryCallback<T>(
 
     private fun retryCall() {
         val delay = (1 shl retries) * 1000 + random.nextInt(1001).toLong()
-        Log.d("RetryCallback", "Retry No. ${retries + 1}/$retryCount with delay $delay")
+        Log.d(TAG, "Retry No. ${retries + 1}/$retryCount with delay $delay")
         executor.schedule({
             call.clone().enqueue(RetryCallback(call, delegate, executor, retryCount, retries + 1))
         }, delay, TimeUnit.MILLISECONDS)
     }
 
     companion object {
+        private const val TAG = "RetryCallback"
         private val random = Random()
     }
 }
