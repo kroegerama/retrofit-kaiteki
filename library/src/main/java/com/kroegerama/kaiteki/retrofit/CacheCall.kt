@@ -60,13 +60,18 @@ class CacheCall<T>(
 
     private fun enqueueWithCache(callback: Callback<T>) {
         Thread {
-            handler.getCache(buildRequest())?.let {
-                when (checkTimestamp(it.timestamp)) {
-                    Action.NoAction -> return@Thread //Debounce
-                    Action.Full -> return@let   //Cached data too old
-                    Action.Reload -> {
-                        val convertedData: T? = bytesToResponse(retrofit, type, annotations, it.data)
-                        executor.execute { callback.onResponse(delegate, Response.success(convertedData)) }
+            handler.getCache(buildRequest())?.let outer@{ item ->
+                checkTimestamp(item.timestamp).let { action ->
+                    when (action) {
+                        Action.Full -> return@outer   //Cached data too old
+                        Action.NoAction,              //Debounce/Reload
+                        Action.Reload -> {
+                            val convertedData: T? = bytesToResponse(retrofit, type, annotations, item.data)
+                            executor.execute { callback.onResponse(delegate, Response.success(convertedData)) }
+                        }
+                    }
+                    if (action == Action.NoAction) {  //Debounce
+                        return@Thread
                     }
                 }
             }

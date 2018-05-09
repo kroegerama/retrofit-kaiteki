@@ -23,7 +23,7 @@ allprojects {
 
 ```gradle
 dependencies {
-  implementation 'com.kroegerama:retrofit-kaiteki:1.1.0'
+  implementation 'com.kroegerama:retrofit-kaiteki:1.1.1'
 }
 ```
 
