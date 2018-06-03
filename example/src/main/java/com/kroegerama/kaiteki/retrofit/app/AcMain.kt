@@ -6,7 +6,7 @@ import android.util.Log
 import com.kroegerama.kaiteki.retrofit.CacheCallAdapterFactory
 import com.kroegerama.kaiteki.retrofit.DebugInterceptor
 import com.kroegerama.kaiteki.retrofit.DefaultCacheHandler
-import com.kroegerama.kaiteki.retrofit.RetryCallAdapterFactory
+import com.kroegerama.kaiteki.retrofit.retry.RetryCallAdapterFactory
 import kotlinx.android.synthetic.main.ac_main.*
 import okhttp3.OkHttpClient
 import retrofit2.Call

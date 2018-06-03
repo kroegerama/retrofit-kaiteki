@@ -3,10 +3,9 @@ package com.kroegerama.kaiteki.retrofit.app;
 import android.content.Context;
 
 import com.kroegerama.kaiteki.retrofit.CacheCallAdapterFactory;
-import com.kroegerama.kaiteki.retrofit.CacheHandler;
 import com.kroegerama.kaiteki.retrofit.DebugInterceptor;
 import com.kroegerama.kaiteki.retrofit.DefaultCacheHandler;
-import com.kroegerama.kaiteki.retrofit.RetryCallAdapterFactory;
+import com.kroegerama.kaiteki.retrofit.retry.RetryCallAdapterFactory;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;

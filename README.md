@@ -1,5 +1,6 @@
 [![Release](https://jitpack.io/v/kroegerama/retrofit-kaiteki.svg)](https://jitpack.io/#kroegerama/retrofit-kaiteki)
 [![Build Status](https://travis-ci.org/kroegerama/retrofit-kaiteki.svg?branch=master)](https://travis-ci.org/kroegerama/retrofit-kaiteki)
+[![Downloads](https://jitpack.io/v/kroegerama/retrofit-kaiteki/month.svg)](https://jitpack.io/#kroegerama/retrofit-kaiteki)
 
 # Retrofit Kaiteki
 A collection of Retrofit convenience classes
@@ -23,7 +24,7 @@ allprojects {
 
 ```gradle
 dependencies {
-  implementation 'com.kroegerama:retrofit-kaiteki:1.1.1'
+  implementation 'com.kroegerama:retrofit-kaiteki:1.2.0'
 }
 ```
 

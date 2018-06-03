@@ -1,6 +1,7 @@
-package com.kroegerama.kaiteki.retrofit
+package com.kroegerama.kaiteki.retrofit.cache
 
 import android.util.Log
+import com.kroegerama.kaiteki.retrofit.CacheHandler
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.ResponseBody

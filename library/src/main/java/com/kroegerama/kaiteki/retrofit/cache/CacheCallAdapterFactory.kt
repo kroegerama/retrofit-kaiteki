@@ -1,5 +1,7 @@
 package com.kroegerama.kaiteki.retrofit
 
+import com.kroegerama.kaiteki.retrofit.cache.Cache
+import com.kroegerama.kaiteki.retrofit.cache.CacheCall
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Retrofit

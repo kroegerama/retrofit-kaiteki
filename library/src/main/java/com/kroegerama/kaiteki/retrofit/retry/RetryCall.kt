@@ -1,4 +1,4 @@
-package com.kroegerama.kaiteki.retrofit
+package com.kroegerama.kaiteki.retrofit.retry
 
 import okhttp3.Request
 import retrofit2.Call

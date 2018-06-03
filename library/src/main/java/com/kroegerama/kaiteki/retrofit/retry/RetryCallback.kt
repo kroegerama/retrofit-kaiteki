@@ -1,6 +1,7 @@
-package com.kroegerama.kaiteki.retrofit
+package com.kroegerama.kaiteki.retrofit.retry
 
 import android.util.Log
+import com.kroegerama.kaiteki.retrofit.TimeoutExeption
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

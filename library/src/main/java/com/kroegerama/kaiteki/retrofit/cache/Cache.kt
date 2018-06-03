@@ -1,4 +1,4 @@
-package com.kroegerama.kaiteki.retrofit
+package com.kroegerama.kaiteki.retrofit.cache
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
