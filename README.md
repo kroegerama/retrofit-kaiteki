@@ -76,7 +76,7 @@ Allowed functions (see JavaDoc):
 * onFailure
 * onSuccess
 * onNoSuccess
-* onFailure
+* onError
 
 ## Usage (LiveData)
 
