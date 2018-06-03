@@ -6,6 +6,7 @@ import android.util.Log
 import com.kroegerama.kaiteki.retrofit.CacheCallAdapterFactory
 import com.kroegerama.kaiteki.retrofit.DebugInterceptor
 import com.kroegerama.kaiteki.retrofit.DefaultCacheHandler
+import com.kroegerama.kaiteki.retrofit.dsl.enqueue
 import com.kroegerama.kaiteki.retrofit.retry.RetryCallAdapterFactory
 import kotlinx.android.synthetic.main.ac_main.*
 import okhttp3.OkHttpClient
@@ -42,7 +43,7 @@ class AcMain : AppCompatActivity() {
         setContentView(R.layout.ac_main)
 
         textView.setOnClickListener { loadData() }
-        loadData()
+        loadDataDSL()
     }
 
     private fun loadData() {
@@ -57,5 +58,21 @@ class AcMain : AppCompatActivity() {
                 textView.text = t.toString()
             }
         })
+    }
+
+    private fun loadDataDSL() {
+        api.getPost(1).enqueue {
+            onSuccess {
+                Log.d("onSuccess", body().toString())
+                textView.text = body().toString()
+            }
+            onNoSuccess {
+                Log.d("onNoSuccess", body().toString())
+            }
+            onFailure { t ->
+                Log.d("onFailure", "" + t.toString())
+                textView.text = t.toString()
+            }
+        }
     }
 }
