@@ -24,7 +24,7 @@ allprojects {
 
 ```gradle
 dependencies {
-  implementation 'com.kroegerama:retrofit-kaiteki:1.3.1'
+  implementation 'com.kroegerama:retrofit-kaiteki:1.3.2'
 }
 ```
 
@@ -76,7 +76,7 @@ Allowed functions (see JavaDoc):
 * onFailure
 * onSuccess
 * onNoSuccess
-* onFailure
+* onError
 
 ## Usage (LiveData)
 
