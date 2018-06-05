@@ -33,7 +33,7 @@ fun <T> Call<T>.createListing(): Listing<T> {
     val liveData = MutableLiveData<T>()
     val networkState = MutableLiveData<NetworkState>()
 
-    val retry = {
+    val block: Call<T>.() -> Unit = {
         enqueue {
             before {
                 networkState.postValue(NetworkState.LOADING)
@@ -46,10 +46,10 @@ fun <T> Call<T>.createListing(): Listing<T> {
                 networkState.postValue(NetworkState.LOADED)
             }
             onNoSuccess {
-                networkState.postValue(NetworkState.error("error code ${code()}", code()))
+                networkState.postValue(NetworkState.error("Response Code: ${code()}", code()))
             }
         }
     }
-    retry.invoke()
-    return Listing(liveData, networkState, retry)
+    apply(block)
+    return Listing(liveData, networkState, { clone().apply(block) })
 }
