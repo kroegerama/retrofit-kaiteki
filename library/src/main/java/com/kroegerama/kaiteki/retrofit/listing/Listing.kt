@@ -16,7 +16,11 @@ sealed class NetworkState(
 ) {
     object LOADED : NetworkState(Status.SUCCESS)
     object LOADING : NetworkState(Status.RUNNING)
-    data class Error(val msg: String?, val code: Int? = null) : NetworkState(Status.FAILED)
+    data class Error(val message: String?, val code: Int? = null) : NetworkState(Status.FAILED)
+
+    override fun toString(): String {
+        return status.toString()
+    }
 }
 
 data class Listing<T>(
