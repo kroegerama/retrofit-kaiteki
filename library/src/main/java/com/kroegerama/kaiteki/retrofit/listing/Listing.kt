@@ -11,16 +11,12 @@ enum class Status {
     FAILED
 }
 
-@Suppress("DataClassPrivateConstructor")
-data class NetworkState private constructor(
-        val status: Status,
-        val msg: String? = null,
-        val code: Int? = null) {
-    companion object {
-        val LOADED = NetworkState(Status.SUCCESS)
-        val LOADING = NetworkState(Status.RUNNING)
-        fun error(msg: String?, code: Int? = null) = NetworkState(Status.FAILED, msg, code)
-    }
+sealed class NetworkState(
+        val status: Status
+) {
+    object LOADED : NetworkState(Status.SUCCESS)
+    object LOADING : NetworkState(Status.RUNNING)
+    data class Error(val msg: String?, val code: Int? = null) : NetworkState(Status.FAILED)
 }
 
 data class Listing<T>(
@@ -29,7 +25,7 @@ data class Listing<T>(
         val retry: () -> Unit
 )
 
-fun <T> Call<T>.createListing(): Listing<T> {
+fun <T> Call<T>.createListing(fetchNow: Boolean = true, successHook: ((T?) -> Unit)? = null): Listing<T> {
     val liveData = MutableLiveData<T>()
     val networkState = MutableLiveData<NetworkState>()
 
@@ -39,17 +35,20 @@ fun <T> Call<T>.createListing(): Listing<T> {
                 networkState.postValue(NetworkState.LOADING)
             }
             onFailure { t ->
-                networkState.postValue(NetworkState.error(t.message))
+                networkState.postValue(NetworkState.Error(t.message))
             }
             onSuccess {
                 liveData.postValue(body())
+                successHook?.invoke(body())
                 networkState.postValue(NetworkState.LOADED)
             }
             onNoSuccess {
-                networkState.postValue(NetworkState.error("Response Code: ${code()}", code()))
+                networkState.postValue(NetworkState.Error("Response Code: ${code()}", code()))
             }
         }
     }
-    apply(block)
+    if (fetchNow) {
+        apply(block)
+    }
     return Listing(liveData, networkState, { clone().apply(block) })
 }
