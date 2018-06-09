@@ -34,10 +34,8 @@ fun <T> Call<T>.createListing(fetchNow: Boolean = true, successHook: ((T?) -> Un
     val networkState = MutableLiveData<NetworkState>()
 
     val block: Call<T>.() -> Unit = {
+        networkState.postValue(NetworkState.LOADING)
         enqueue {
-            before {
-                networkState.postValue(NetworkState.LOADING)
-            }
             onFailure { t ->
                 networkState.postValue(NetworkState.Error(t.message))
             }
