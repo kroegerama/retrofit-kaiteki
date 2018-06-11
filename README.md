@@ -30,32 +30,34 @@ dependencies {
 
 ## Current components
 
-### Retrofit LiveData extension function
-
+#### Retrofit LiveData extension function
 Convert any retrofit call to LiveData (Android Architecture Components).
 
-### Retrofit DSL
-
+#### Retrofit DSL
 Invoke your retrofit calls using a simple domain specific language.
 
-### Debug Interceptor
+#### Debug Interceptor
 Allows you to see outgoing requests and the incoming responses in your **logcat**
 
-### Retry Call Annotation
+#### Retry Call Annotation
 Annotate your retrofit calls and let them automatically be retried.
 Allows to set the retry count per call.
 
-### Cache Call Annotation
+#### Cache Call Annotation
 Annotate your retrofit calls and let them automatically be cached.
 Allows to set a debounce time and a maximum age per call.
 
 - **debounce**: Load from cache and avoid a network call, if the cached value is younger than specified amount of milliseconds. Set to 0 to disable.
 - **maxAge**: Load from cache and enqueue a network call, if the cached value is younger than the specified amount of milliseconds. **onSuccess()** may be called **twice**. Once with cached data and once with the updated data from network. Set to 0 to disable.
 
-## Usage (DSL)
+## Some examples
+
+See [**Wiki**](https://github.com/kroegerama/retrofit-kaiteki/wiki) for more documentation and examples.
+
+### DSL
 
 ```kotlin
-api.getPost(1).enqueue {
+myApi.myCall(param).enqueue {
     onSuccess {
         Log.d("onSuccess", body().toString())
         textView.text = body().toString()
@@ -69,23 +71,11 @@ api.getPost(1).enqueue {
     }
 }
 ```
-Allowed functions (see JavaDoc):
-* before
-* after
-* onResponse
-* onFailure
-* onSuccess
-* onNoSuccess
-* onError
 
-## Usage (LiveData)
-
-1. Create listing by invoking `createListing` on any retrofit call
-2. Use the LiveData objects to monitor network failures and the actual result
-3. Use the listing to retry the call ()
+### LiveData
 
 ```kotlin
-val listing = api.getPost(1).createListing()
+val listing = myApi.myCall(param).createListing()
 
 val networkStateLiveData = listing.networkState
 val resultLiveData = listing.result
@@ -93,50 +83,7 @@ val resultLiveData = listing.result
 listing.retry()
 ```
 
-## Usage (Retry and Cache)
-
-### Kotlin
-
-```kotlin
-val client = OkHttpClient.Builder()
-
-if (BuildConfig.DEBUG) {
-  client.addNetworkInterceptor(DebugInterceptor)
-}
-
-val retrofit = Retrofit.Builder()
-                .client(client.build())
-                .addCallAdapterFactory(RetryCallAdapterFactory)
-                .addCallAdapterFactory(CacheCallAdapterFactory(DefaultCacheHandler(this)))
-                .addConverterFactory(...)
-                .baseUrl(...)
-                .build()
-
-val api = retrofit.create(MyAPI::class.java)
-```
-
-### Java
-
-```java
-OkHttpClient.Builder client = new OkHttpClient.Builder();
-if (BuildConfig.DEBUG) {
-  client.addNetworkInterceptor(DebugInterceptor.INSTANCE);
-}
-
-Retrofit retrofit = new Retrofit.Builder()
-                        .client(client.build())
-                        .addCallAdapterFactory(RetryCallAdapterFactory.INSTANCE)
-                        .addCallAdapterFactory(new CacheCallAdapterFactory(new DefaultCacheHandler(context, DefaultCacheHandler.DEFAULT_DISK_SIZE, DefaultCacheHandler.DEFAULT_MEM_CACHE_ENTRIES)))
-                        .addConverterFactory(...)
-                        .baseUrl(...)
-                        .build();
-
-JavaAPI javaAPI = retrofit.create(MyAPI.class);
-```
-
-## Annotate your API
-
-### Kotlin
+### Retry and Cache Annotations
 
 ```kotlin
 interface MyAPI {
@@ -153,8 +100,6 @@ interface MyAPI {
   fun getPostNoCacheNoRetry(@Path("id") id: Int): Call<Post>
 }
 ```
-
-### Java
 
 ```java
 public interface MyAPI {
