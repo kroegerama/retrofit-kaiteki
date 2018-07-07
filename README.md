@@ -1,9 +1,19 @@
-[![Release](https://jitpack.io/v/kroegerama/retrofit-kaiteki.svg)](https://jitpack.io/#kroegerama/retrofit-kaiteki)
-[![Build Status](https://travis-ci.org/kroegerama/retrofit-kaiteki.svg?branch=master)](https://travis-ci.org/kroegerama/retrofit-kaiteki)
-[![Downloads](https://jitpack.io/v/kroegerama/retrofit-kaiteki/month.svg)](https://jitpack.io/#kroegerama/retrofit-kaiteki)
 
-# Retrofit Kaiteki
+<p align="center">
+
+<img src="doc/logo/logo.png" alt="logo" title="logo" height="200"/>
+
+</p>
+
+<p align="center">
+<a href ="https://jitpack.io/#kroegerama/retrofit-kaiteki"><img src="https://jitpack.io/v/kroegerama/retrofit-kaiteki.svg" alt="Release" title="Release" /></a>
+<a href ="https://travis-ci.org/kroegerama/retrofit-kaiteki"><img src="https://travis-ci.org/kroegerama/retrofit-kaiteki.svg?branch=master" alt="Build Status" title="Build Status" /></a>
+<a href ="https://jitpack.io/#kroegerama/retrofit-kaiteki"><img src="https://jitpack.io/v/kroegerama/retrofit-kaiteki/month.svg" alt="Downloads" title="Downloads" /></a>
+</p>
+
+<p align="center">
 A collection of Retrofit convenience classes
+</p>
 
 ## Importing the library
 
