@@ -23,7 +23,7 @@ class AcMain : AppCompatActivity() {
         val client = OkHttpClient.Builder()
 
         if (BuildConfig.DEBUG) {
-            client.addNetworkInterceptor(DebugInterceptor)
+            client.addInterceptor(DebugInterceptor)
         }
 
         val retrofit = Retrofit.Builder()
@@ -50,6 +50,7 @@ class AcMain : AppCompatActivity() {
         api.getPost(1).enqueue(object : Callback<Post> {
             override fun onResponse(call: Call<Post>, response: Response<Post>) {
                 Log.d("onResponse", response.body().toString())
+                Log.d("header", response.headers().toMultimap().toString())
                 textView.text = response.body().toString()
             }
 

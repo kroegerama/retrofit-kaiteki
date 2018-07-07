@@ -2,6 +2,7 @@ package com.kroegerama.kaiteki.retrofit.cache
 
 import android.util.Log
 import com.kroegerama.kaiteki.retrofit.CacheHandler
+import okhttp3.Headers
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -68,7 +69,7 @@ class CacheCall<T>(
                         Action.NoAction,              //Debounce/Reload
                         Action.Reload -> {
                             val convertedData: T? = bytesToResponse(retrofit, type, annotations, item.data)
-                            executor.execute { callback.onResponse(delegate, Response.success(convertedData)) }
+                            executor.execute { callback.onResponse(delegate, Response.success(convertedData, Headers.of("kaiteki-cached", "true"))) }
                         }
                     }
                     if (action == Action.NoAction) {  //Debounce
