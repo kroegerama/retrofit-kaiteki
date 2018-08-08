@@ -14,8 +14,8 @@ class CachedListing<T>(
         val key = request().url().hashCode()
         val delegate = createListing(false) {
             it ?: return@createListing
-            converter.serialize(it).let {
-                saveCallback.save(key, it)
+            converter.serialize(it).let { serialized ->
+                saveCallback.save(key, serialized)
             }
         }
         saveCallback.restore(key)?.let {

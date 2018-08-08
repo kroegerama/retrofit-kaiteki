@@ -26,10 +26,14 @@ sealed class NetworkState(
 data class Listing<T>(
         val result: LiveData<T>,
         val networkState: LiveData<NetworkState>,
-        val retry: () -> Unit
-)
+        private val retry: () -> Unit
+) {
+    fun retry() = retry.invoke()
+}
 
-fun <T> Call<T>.createListing(fetchNow: Boolean = true, successHook: ((T?) -> Unit)? = null): Listing<T> {
+fun <T> Call<T>.createListing(fetchNow: Boolean = true) = createListing(fetchNow, null)
+
+internal fun <T> Call<T>.createListing(fetchNow: Boolean = true, successHook: ((T?) -> Unit)? = null): Listing<T> {
     val liveData = MutableLiveData<T>()
     val networkState = MutableLiveData<NetworkState>()
 
@@ -52,5 +56,5 @@ fun <T> Call<T>.createListing(fetchNow: Boolean = true, successHook: ((T?) -> Un
     if (fetchNow) {
         apply(block)
     }
-    return Listing(liveData, networkState, { clone().apply(block) })
+    return Listing(liveData, networkState) { clone().apply(block) }
 }
