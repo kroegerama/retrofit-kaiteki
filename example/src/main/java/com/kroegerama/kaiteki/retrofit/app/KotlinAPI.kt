@@ -19,4 +19,7 @@ interface KotlinAPI {
 
     @GET("posts/{id}")
     fun getPostNoCacheNoRetry(@Path("id") id: Int): Call<Post>
+
+    @GET("notExisting")
+    fun getNotExisting(): Call<String>
 }

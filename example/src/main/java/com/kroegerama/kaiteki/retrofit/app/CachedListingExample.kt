@@ -55,6 +55,6 @@ class CachedListingExample {
     }
 
     fun retry() {
-        listingLiveData.value?.retry?.invoke()
+        listingLiveData.value?.retry()
     }
 }

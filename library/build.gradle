@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     compileOptions {
         kotlinOptions.freeCompilerArgs += ['-module-name', "retrofit.kaiteki"]
@@ -11,7 +11,7 @@ android {
     defaultConfig {
         minSdkVersion 17
         versionCode 3
-        versionName "1.5.0"
+        versionName "1.5.1"
     }
 
     buildTypes {
