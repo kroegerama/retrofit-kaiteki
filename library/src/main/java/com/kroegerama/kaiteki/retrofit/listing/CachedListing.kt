@@ -1,7 +1,7 @@
 package com.kroegerama.kaiteki.retrofit.listing
 
-import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import retrofit2.Call
 import java.lang.reflect.Type
@@ -19,7 +19,7 @@ class CachedListing<T>(
             }
         }
         saveCallback.restore(key)?.let {
-            (delegate.result as MutableLiveData).value = converter.parse(it, type)
+            (delegate.result as MutableLiveData<*>).value = converter.parse(it, type)
         }
         if (fetchNow) {
             delegate.retry()

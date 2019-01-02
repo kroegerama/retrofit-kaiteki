@@ -1,10 +1,10 @@
 package com.kroegerama.kaiteki.retrofit.app
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.kroegerama.kaiteki.retrofit.CacheCallAdapterFactory
 import com.kroegerama.kaiteki.retrofit.DebugInterceptor
 import com.kroegerama.kaiteki.retrofit.DefaultCacheHandler

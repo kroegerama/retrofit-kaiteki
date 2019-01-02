@@ -1,7 +1,7 @@
 package com.kroegerama.kaiteki.retrofit.listing
 
-import android.arch.lifecycle.MutableLiveData
 import android.os.Handler
+import androidx.lifecycle.MutableLiveData
 import com.kroegerama.kaiteki.retrofit.dsl.enqueue
 import retrofit2.Call
 import retrofit2.Response

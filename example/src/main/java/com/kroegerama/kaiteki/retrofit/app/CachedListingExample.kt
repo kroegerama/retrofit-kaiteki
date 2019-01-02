@@ -1,8 +1,8 @@
 package com.kroegerama.kaiteki.retrofit.app
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.google.gson.reflect.TypeToken
 import com.kroegerama.kaiteki.retrofit.DebugInterceptor
 import com.kroegerama.kaiteki.retrofit.listing.*
