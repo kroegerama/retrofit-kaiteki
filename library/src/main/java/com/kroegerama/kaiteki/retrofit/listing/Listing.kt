@@ -18,6 +18,8 @@ sealed class NetworkState(
     object LOADING : NetworkState(Status.RUNNING)
     data class Error(val message: String?, val code: Int? = null) : NetworkState(Status.FAILED)
 
+    val isRunning get() = status == Status.RUNNING
+
     override fun toString(): String {
         return status.toString()
     }

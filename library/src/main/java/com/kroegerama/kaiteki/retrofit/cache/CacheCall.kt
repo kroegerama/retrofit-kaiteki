@@ -116,7 +116,7 @@ class CacheCall<T>(
             it.requestBodyConverter(type, annotations, null, retrofit)?.let {
                 val buf = Buffer()
                 try {
-                    (it as Converter<T, RequestBody>).convert(data).writeTo(buf)
+                    (it as Converter<T, RequestBody>).convert(data)?.writeTo(buf)
                 } catch (e: IOException) {
                     return@forEach
                 }
