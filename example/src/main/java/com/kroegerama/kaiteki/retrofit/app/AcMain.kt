@@ -102,6 +102,9 @@ class AcMain : AppCompatActivity() {
 
     private fun loadDataDSL() {
         api.getPost(1).enqueue {
+            before {
+                Log.d("before", "Test")
+            }
             onSuccess {
                 Log.d("onSuccess", body().toString())
                 textView.text = body().toString()
@@ -112,6 +115,9 @@ class AcMain : AppCompatActivity() {
             onFailure { t ->
                 Log.d("onFailure", "" + t.toString())
                 textView.text = t.toString()
+            }
+            after {
+                Log.d("after", "Test")
             }
         }
     }

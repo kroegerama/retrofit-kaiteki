@@ -17,13 +17,11 @@ class KaitekiCallback<T> : Callback<T> {
     private var onError: ((Response<T>) -> Unit)? = null
 
     override fun onFailure(call: Call<T>, t: Throwable) {
-        before?.invoke()
         onFailure?.invoke(t)
         after?.invoke()
     }
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
-        before?.invoke()
         onResponse?.invoke(response)
 
         if (response.isSuccessful) {
@@ -87,8 +85,14 @@ class KaitekiCallback<T> : Callback<T> {
     fun onFailure(listener: (Throwable) -> Unit) {
         onFailure = listener
     }
+
+    fun doBefore() = before?.invoke()
 }
 
 inline fun <T> Call<T>.enqueue(block: KaitekiCallback<T>.() -> Unit) {
-    enqueue(KaitekiCallback<T>().apply(block))
+    KaitekiCallback<T>().apply {
+        block.invoke(this)
+        doBefore()
+        enqueue(this)
+    }
 }
