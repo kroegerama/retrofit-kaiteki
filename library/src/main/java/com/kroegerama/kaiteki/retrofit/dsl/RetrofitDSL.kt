@@ -1,10 +1,14 @@
 package com.kroegerama.kaiteki.retrofit.dsl
 
+import android.view.View
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.ref.WeakReference
 
-class KaitekiCallback<T> : Callback<T> {
+class KaitekiCallback<T>(progressView: View?) : Callback<T> {
+
+    private var weakRef = if (progressView != null) WeakReference(progressView) else null
 
     private var before: (() -> Unit)? = null
     private var after: (() -> Unit)? = null
@@ -16,9 +20,14 @@ class KaitekiCallback<T> : Callback<T> {
     private var onNoSuccess: ((Response<T>) -> Unit)? = null
     private var onError: ((Response<T>) -> Unit)? = null
 
+    private fun handleProgress(visible: Boolean) {
+        weakRef?.get()?.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
     override fun onFailure(call: Call<T>, t: Throwable) {
         onFailure?.invoke(t)
         after?.invoke()
+        handleProgress(false)
     }
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
@@ -34,6 +43,7 @@ class KaitekiCallback<T> : Callback<T> {
         }
 
         after?.invoke()
+        handleProgress(false)
     }
 
     /**
@@ -86,11 +96,14 @@ class KaitekiCallback<T> : Callback<T> {
         onFailure = listener
     }
 
-    fun doBefore() = before?.invoke()
+    fun doBefore() {
+        before?.invoke()
+        handleProgress(true)
+    }
 }
 
-inline fun <T> Call<T>.enqueue(block: KaitekiCallback<T>.() -> Unit) {
-    KaitekiCallback<T>().apply {
+inline fun <T> Call<T>.enqueue(progressView: View? = null, block: KaitekiCallback<T>.() -> Unit) {
+    KaitekiCallback<T>(progressView).apply {
         block.invoke(this)
         doBefore()
         enqueue(this)
