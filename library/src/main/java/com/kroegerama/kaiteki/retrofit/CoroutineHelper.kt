@@ -13,9 +13,19 @@ import kotlin.random.Random
 sealed class Result<out T> {
     data class Success<out T>(val data: T?) : Result<T>()
     data class NoSuccess(val code: Int) : Result<Nothing>()
+    object Cancelled : Result<Nothing>()
     data class Error(val exception: Exception) : Result<Nothing>()
 
+    val isSuccess get() = this is Success
+    val isNoSuccess get() = this is NoSuccess
+    val isCancelled get() = this === Cancelled
+    val isError get() = this is Error
+
     fun getOrNull() = if (this is Success) data else null
+    fun <E> map(mapFun: (T?) -> E?) = if (this is Success) Success(mapFun(data)) else this
+
+    // better toString name for objects, data classes will automatically overwrite this
+    override fun toString(): String = this::class.java.simpleName
 }
 
 enum class ListingState {
@@ -25,7 +35,7 @@ enum class ListingState {
     RETRYING,
     FINISHED;
 
-    val isRunning get() = this == RUNNING || this == RETRYING
+    val isRunning get() = this === RUNNING || this === RETRYING
 }
 
 class Listing<T>(
@@ -53,6 +63,8 @@ suspend fun <T> retrofitCall(
     repeat(retryCount + 1) { counter ->
         val response = try {
             withContext(Dispatchers.IO) { block.invoke() }
+        } catch (c: CancellationException) {
+            return Result.Cancelled
         } catch (e: IOException) {
             return Result.Error(e)
         }
