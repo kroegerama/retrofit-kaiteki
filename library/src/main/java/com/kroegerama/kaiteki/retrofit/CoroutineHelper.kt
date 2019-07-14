@@ -6,11 +6,13 @@ import kotlinx.coroutines.*
 import retrofit2.Response
 import java.io.Closeable
 import java.io.IOException
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeoutException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.random.Random
 
-sealed class Result<out T> {
+sealed class Result<out R> {
     data class Success<out T>(val data: T?) : Result<T>()
     data class NoSuccess(val code: Int) : Result<Nothing>()
     object Cancelled : Result<Nothing>()
@@ -22,7 +24,7 @@ sealed class Result<out T> {
     val isError get() = this is Error
 
     fun getOrNull() = if (this is Success) data else null
-    fun <E> map(mapFun: (T?) -> E?) = if (this is Success) Success(mapFun(data)) else this
+    fun <E> map(mapFun: (R?) -> E?) = if (this is Success) Success(mapFun(data)) else this
 
     // better toString name for objects, data classes will automatically overwrite this
     override fun toString(): String = this::class.java.simpleName
@@ -30,7 +32,6 @@ sealed class Result<out T> {
 
 enum class ListingState {
     IDLE,
-    CANCELLED,
     RUNNING,
     RETRYING,
     FINISHED;
@@ -41,25 +42,26 @@ enum class ListingState {
 class Listing<T>(
         val result: LiveData<Result<T>>,
         val state: LiveData<ListingState>,
-        private val update: () -> Unit,
-        private val cancel: () -> Unit
+        private val updateFun: () -> Unit,
+        private val cancelFun: () -> Unit
 ) : Closeable {
     override fun close() = cancel()
 
-    fun update() = update.invoke()
-    fun cancel() = cancel.invoke()
+    fun update() = updateFun.invoke()
+    fun cancel() = cancelFun.invoke()
 }
 
-typealias RenewFun<T> = suspend (counter: Int, response: Response<T>) -> Boolean
+private typealias ApiFun<T> = suspend () -> Response<T>
+private typealias RenewFun<T> = suspend (counter: Int, response: Response<T>) -> Boolean
 
 val DefaultRenewFun: RenewFun<*> = { _, r -> r.code() == 401 }
 
 suspend fun <T> retrofitCall(
         renewFun: RenewFun<T> = DefaultRenewFun,
         retryCount: Int = 0,
-        block: suspend () -> Response<T>
+        block: ApiFun<T>
 ): Result<T> {
-    var lastResult: Result<T> = Result.Error(IllegalStateException())
+    lateinit var lastResult: Result<T>
     repeat(retryCount + 1) { counter ->
         val response = try {
             withContext(Dispatchers.IO) { block.invoke() }
@@ -89,7 +91,7 @@ fun <T> CoroutineScope.retrofitCallAsync(
         start: CoroutineStart = CoroutineStart.DEFAULT,
         renewFun: RenewFun<T> = DefaultRenewFun,
         retryCount: Int = 0,
-        block: suspend () -> Response<T>
+        block: ApiFun<T>
 ) = async(context, start) { retrofitCall(renewFun, retryCount, block) }
 
 fun <T> CoroutineScope.retrofitListing(
@@ -98,16 +100,13 @@ fun <T> CoroutineScope.retrofitListing(
         launchNow: Boolean = true,
         renewFun: RenewFun<T> = DefaultRenewFun,
         retryCount: Int = 0,
-        block: suspend () -> Response<T>
+        block: ApiFun<T>
 ): Listing<T> {
     stateLiveData.value = ListingState.IDLE
 
     var job: Job? = null
     val update: () -> Unit = {
-        job?.let { oldJob ->
-            oldJob.cancel()
-            stateLiveData.value = ListingState.CANCELLED
-        }
+        job?.cancel()
         job = launch {
             withContext(Dispatchers.Main) {
                 stateLiveData.value = ListingState.RUNNING
@@ -138,7 +137,7 @@ fun <T> CoroutineScope.retrofitListing(
         job?.run {
             if (isActive) {
                 cancel()
-                stateLiveData.value = ListingState.CANCELLED
+                stateLiveData.value = ListingState.IDLE
             }
         }
         job = null

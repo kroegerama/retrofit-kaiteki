@@ -13,7 +13,7 @@ android {
     defaultConfig {
         minSdkVersion 17
         versionCode 3
-        versionName "2.1.6"
+        versionName "2.2.0"
     }
 
     buildTypes {
@@ -32,6 +32,7 @@ dependencies {
     implementation "com.jakewharton:disklrucache:$disk_lru_version"
 
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+    implementation 'androidx.paging:paging-runtime-ktx:2.1.0'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.2'
 

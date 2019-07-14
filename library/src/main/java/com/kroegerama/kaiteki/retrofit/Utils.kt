@@ -45,7 +45,7 @@ fun <T, R> Call<T>.map(mapFunc: (T?) -> R?): Call<R> {
 
         override fun cancel() = self.cancel()
 
-        override fun execute() = self.execute().map(mapFunc)
+        override fun execute(): Response<R> = self.execute().map(mapFunc)
 
         override fun request() = self.request()
     }
