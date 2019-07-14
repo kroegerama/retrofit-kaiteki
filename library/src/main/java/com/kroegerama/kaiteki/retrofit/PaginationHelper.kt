@@ -83,7 +83,7 @@ class RetrofitDataSourceFactory<T>(
 
     override fun create(): RetrofitDataSource<T> {
         val source = RetrofitDataSource(scope, parentJob, apiFun, pageProvider)
-        this.source.value = source
+        this.source.postValue(source)
         return source
     }
 }
