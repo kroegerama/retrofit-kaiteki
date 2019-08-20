@@ -5,9 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
 import retrofit2.Response
 import java.io.Closeable
-import java.io.IOException
-import java.net.SocketTimeoutException
-import java.util.concurrent.TimeoutException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.random.Random
@@ -67,7 +64,7 @@ suspend fun <T> retrofitCall(
             withContext(Dispatchers.IO) { block.invoke() }
         } catch (c: CancellationException) {
             return Result.Cancelled
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             return Result.Error(e)
         }
         if (response.isSuccessful) {
