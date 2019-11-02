@@ -1,7 +1,5 @@
-package com.kroegerama.kaiteki.retrofit
+package com.kroegerama.kaiteki.retrofit.cache
 
-import com.kroegerama.kaiteki.retrofit.cache.Cache
-import com.kroegerama.kaiteki.retrofit.cache.CacheCall
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Retrofit
@@ -12,7 +10,8 @@ import java.util.concurrent.ScheduledExecutorService
 
 
 class CacheCallAdapterFactory(
-        private val handler: CacheHandler) : CallAdapter.Factory() {
+    private val handler: CacheHandler
+) : CallAdapter.Factory() {
 
     private val executor: ScheduledExecutorService by lazy { Executors.newScheduledThreadPool(1) }
 

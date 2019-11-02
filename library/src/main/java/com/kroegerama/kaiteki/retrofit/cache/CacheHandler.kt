@@ -1,9 +1,10 @@
-package com.kroegerama.kaiteki.retrofit
+package com.kroegerama.kaiteki.retrofit.cache
 
 import android.content.Context
 import android.util.Log
 import android.util.LruCache
 import com.jakewharton.disklrucache.DiskLruCache
+import com.kroegerama.kaiteki.retrofit.toSha1Hash
 import okhttp3.Request
 import retrofit2.Response
 import java.io.File
@@ -20,12 +21,14 @@ interface CacheHandler {
 class CacheItem(val timestamp: Long, val data: ByteArray)
 
 class DefaultCacheHandler(
-        private val cacheFile: File,
-        private val cacheSize: Long = DEFAULT_DISK_SIZE,
-        private val memCacheEntries: Int = DEFAULT_MEM_CACHE_ENTRIES) : CacheHandler {
+    private val cacheFile: File,
+    private val cacheSize: Long = DEFAULT_DISK_SIZE,
+    private val memCacheEntries: Int = DEFAULT_MEM_CACHE_ENTRIES
+) : CacheHandler {
 
     constructor(context: Context, cacheSize: Long = DEFAULT_DISK_SIZE, memCacheEntries: Int = DEFAULT_MEM_CACHE_ENTRIES) : this(
-            File(context.cacheDir, "retrofit.cache"), cacheSize, memCacheEntries)
+        File(context.cacheDir, "retrofit.cache"), cacheSize, memCacheEntries
+    )
 
     private val diskCache: DiskLruCache by lazy {
         DiskLruCache.open(cacheFile, 1, 1, cacheSize)

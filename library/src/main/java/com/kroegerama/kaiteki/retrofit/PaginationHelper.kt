@@ -29,13 +29,13 @@ object DefaultPageProvider : PageProvider {
 val DefaultPageConfig by lazy { PagedList.Config.Builder().setPageSize(10).setPrefetchDistance(20).build() }
 
 class PagedListing<T>(
-        val pagedList: LiveData<PagedList<T>>,
-        val initialState: LiveData<ListingState>,
-        val loadState: LiveData<ListingState>,
-        val initialRetry: LiveData<RetryFun>,
-        val loadRetry: LiveData<RetryFun>,
-        private val refreshFun: () -> Unit,
-        private val cancelFun: () -> Unit
+    val pagedList: LiveData<PagedList<T>>,
+    val initialState: LiveData<ListingState>,
+    val loadState: LiveData<ListingState>,
+    val initialRetry: LiveData<RetryFun>,
+    val loadRetry: LiveData<RetryFun>,
+    private val refreshFun: () -> Unit,
+    private val cancelFun: () -> Unit
 ) : Closeable {
     override fun close() = cancel()
 
@@ -52,31 +52,32 @@ class PagedListing<T>(
 }
 
 fun <T> CoroutineScope.retrofitPagedListing(
-        config: PagedList.Config = DefaultPageConfig,
-        pageProvider: PageProvider = DefaultPageProvider,
-        apiFun: ApiListFun<T>): PagedListing<T> {
+    config: PagedList.Config = DefaultPageConfig,
+    pageProvider: PageProvider = DefaultPageProvider,
+    apiFun: ApiListFun<T>
+): PagedListing<T> {
     val parentJob = SupervisorJob()
     val factory = RetrofitDataSourceFactory(this, parentJob, apiFun, pageProvider)
     val livePagedList = LivePagedListBuilder(factory, config)
-            .setFetchExecutor { CoroutineScope(Dispatchers.IO).launch { it.run() } }
-            .build()
+        .setFetchExecutor { CoroutineScope(Dispatchers.IO).launch { it.run() } }
+        .build()
 
     return PagedListing(
-            pagedList = livePagedList,
-            initialState = Transformations.switchMap(factory.source) { it.initialState },
-            loadState = Transformations.switchMap(factory.source) { it.loadState },
-            initialRetry = Transformations.switchMap(factory.source) { it.initialRetry },
-            loadRetry = Transformations.switchMap(factory.source) { it.loadRetry },
-            refreshFun = { factory.source.value?.invalidate() },
-            cancelFun = { parentJob.cancel() }
+        pagedList = livePagedList,
+        initialState = Transformations.switchMap(factory.source) { it.initialState },
+        loadState = Transformations.switchMap(factory.source) { it.loadState },
+        initialRetry = Transformations.switchMap(factory.source) { it.initialRetry },
+        loadRetry = Transformations.switchMap(factory.source) { it.loadRetry },
+        refreshFun = { factory.source.value?.invalidate() },
+        cancelFun = { parentJob.cancel() }
     )
 }
 
 class RetrofitDataSourceFactory<T>(
-        private val scope: CoroutineScope,
-        private val parentJob: Job,
-        private val apiFun: ApiListFun<T>,
-        private val pageProvider: PageProvider
+    private val scope: CoroutineScope,
+    private val parentJob: Job,
+    private val apiFun: ApiListFun<T>,
+    private val pageProvider: PageProvider
 ) : DataSource.Factory<Int, T>() {
 
     val source = MutableLiveData<RetrofitDataSource<T>>()
@@ -89,10 +90,10 @@ class RetrofitDataSourceFactory<T>(
 }
 
 class RetrofitDataSource<T>(
-        private val scope: CoroutineScope,
-        private val parentJob: Job,
-        private val apiFun: ApiListFun<T>,
-        private val pageProvider: PageProvider
+    private val scope: CoroutineScope,
+    private val parentJob: Job,
+    private val apiFun: ApiListFun<T>,
+    private val pageProvider: PageProvider
 ) : PageKeyedDataSource<Int, T>() {
 
     val initialState = MutableLiveData<ListingState>()
@@ -123,14 +124,14 @@ class RetrofitDataSource<T>(
     }
 
     private fun makeLoadRequest(
-            isInitial: Boolean,
-            currentPage: Int,
-            callback: (List<T>) -> Any
+        isInitial: Boolean,
+        currentPage: Int,
+        callback: (List<T>) -> Any
     ): Job = scope.launch(parentJob) {
         updateState(isInitial, ListingState.RUNNING)
         val result = retrofitCall { apiFun(currentPage) }
 
-        if (result is Result.Success) {
+        if (result is RetrofitResponse.Success) {
             val items = result.data.orEmpty()
             callback(items)
             updateRetry(isInitial, null)

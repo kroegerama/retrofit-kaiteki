@@ -11,11 +11,12 @@ import java.util.concurrent.TimeUnit
 
 
 class RetryCallback<T>(
-        val call: Call<T>,
-        val delegate: Callback<T>,
-        val executor: ScheduledExecutorService,
-        val retryCount: Int,
-        val retries: Int = 0) : Callback<T> {
+    val call: Call<T>,
+    val delegate: Callback<T>,
+    val executor: ScheduledExecutorService,
+    val retryCount: Int,
+    val retries: Int = 0
+) : Callback<T> {
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
         delegate.onResponse(call, response)

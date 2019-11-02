@@ -8,9 +8,10 @@ import java.util.concurrent.ScheduledExecutorService
 
 
 class RetryCall<T>(
-        val delegate: Call<T>,
-        val executor: ScheduledExecutorService,
-        val retryCount: Int) : Call<T> {
+    val delegate: Call<T>,
+    val executor: ScheduledExecutorService,
+    val retryCount: Int
+) : Call<T> {
 
     override fun enqueue(callback: Callback<T>) {
         delegate.enqueue(RetryCallback(delegate, callback, executor, retryCount))

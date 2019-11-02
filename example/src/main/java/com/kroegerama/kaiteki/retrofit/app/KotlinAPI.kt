@@ -3,6 +3,7 @@ package com.kroegerama.kaiteki.retrofit.app
 import com.kroegerama.kaiteki.retrofit.cache.Cache
 import com.kroegerama.kaiteki.retrofit.retry.Retry
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -22,4 +23,7 @@ interface KotlinAPI {
 
     @GET("notExisting")
     fun getNotExisting(): Call<String>
+
+    @GET("posts/{id}")
+    suspend fun getPostSuspending(@Path("id") id: Int): Response<Post>
 }

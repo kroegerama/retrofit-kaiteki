@@ -1,7 +1,6 @@
 package com.kroegerama.kaiteki.retrofit.cache
 
 import android.util.Log
-import com.kroegerama.kaiteki.retrofit.CacheHandler
 import okhttp3.Headers
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -14,13 +13,14 @@ import java.util.concurrent.ScheduledExecutorService
 
 
 class CacheCall<T>(
-        val retrofit: Retrofit,
-        val cacheAnnotation: Cache,
-        val annotations: Array<out Annotation>,
-        val type: Type,
-        val delegate: Call<T>,
-        val executor: ScheduledExecutorService,
-        val handler: CacheHandler) : Call<T> {
+    val retrofit: Retrofit,
+    val cacheAnnotation: Cache,
+    val annotations: Array<out Annotation>,
+    val type: Type,
+    val delegate: Call<T>,
+    val executor: ScheduledExecutorService,
+    val handler: CacheHandler
+) : Call<T> {
 
     private enum class Action {
         NoAction,
