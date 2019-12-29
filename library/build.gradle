@@ -16,7 +16,7 @@ android {
     defaultConfig {
         minSdkVersion 17
         versionCode 4
-        versionName "2.3.0"
+        versionName "2.3.1"
     }
 
     buildTypes {
