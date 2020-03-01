@@ -1,3 +1,8 @@
+## This library is now part of the android-kaiteki group and available via JCenter
+### See https://github.com/kroegerama/android-kaiteki
+
+----
+
 <img height="150" src="logo/logo.png">
 
 [![Release](https://jitpack.io/v/com.kroegerama/retrofit-kaiteki.svg)](https://jitpack.io/#com.kroegerama/retrofit-kaiteki)
